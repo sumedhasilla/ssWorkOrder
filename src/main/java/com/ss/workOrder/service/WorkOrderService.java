@@ -5,7 +5,6 @@ import java.util.TreeSet;
 import org.springframework.stereotype.Service;
 
 import com.ss.workOrder.entities.WorkOrder;
-
 @Service
 public interface WorkOrderService {
 

@@ -12,9 +12,6 @@ import com.ss.workOrder.service.WorkOrderService;
 
 @RestController
 public class WorkOrderController {
-/*	PriorityQueue<WorkOrder> testque = new PriorityQueue<WorkOrder>();*/
-// public WorkOrder workOrderPQ(@RequestParam(value="stringId") String stringId, @RequestParam(value="stringTime", defaultValue="11437761522582") String stringTime) {
-    
 	
 	@Autowired
 	private WorkOrderService workOrderService;
@@ -22,10 +19,7 @@ public class WorkOrderController {
 	@RequestMapping("/enqueue")
     public WorkOrder workOrderPQ(@RequestParam(value="id")  long id, @RequestParam(value="time") long time) {
        	WorkOrder workOrder = this.workOrderService.enqueueWorkOrder(id,time);
-       	if(0 == id){
-			 throw new IllegalArgumentException("Work Order ID cannot have value '0'. Please Enter valid ID. ");
-		}
-		if(null == workOrder){
+       	if(null == workOrder){
 			 throw new NullPointerException("Error with Enqueue process. ");
 		}
 		return workOrder;

@@ -18,11 +18,26 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkOrderServiceImpl.class);
 	private HashMap<Long, WorkOrder> workOrderMap = new HashMap<Long, WorkOrder>();
+	
+	public int getWorkOrderMapSize() {
+		return workOrderMap.size();
+	}
+
+	public int getWorkOrderPriorityQueueSize() {
+		return workOrderPriorityQueue.size();
+	}
+
 	private TreeSet<WorkOrder> workOrderPriorityQueue = new TreeSet<WorkOrder>(workOrderComparator);
 	
 	 @Override
 	public WorkOrder enqueueWorkOrder(long workOrderId, long timeStampMs) {
 		 WorkOrder workOrder = null;
+		if(workOrderId <= 0){
+			 throw new IllegalArgumentException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
+		}
+		if(timeStampMs < 0){
+			 throw new IllegalArgumentException("Time cannot have value less than 0. Please Enter valid Time. ");
+		}
 		 if ( workOrderMap.containsKey(workOrderId)) {
 			 throw new IllegalArgumentException("The work Order ID ("+workOrderId+") already Exists!");
 		 }
@@ -91,7 +106,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		                if (workOrder1.getTimeStampMs() > workOrder2.getTimeStampMs()) {
 		                    return 1;
 		                }
-		                return 0;
+		                return 1;
 		            } else {
 		                return -1;
 		            }
@@ -109,7 +124,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		            return -1;
 		        }
 		        
-		        return 0;
+		        return 1;
 		}
     };
 
