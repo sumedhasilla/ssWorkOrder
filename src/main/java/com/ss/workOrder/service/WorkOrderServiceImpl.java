@@ -35,10 +35,8 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		if(workOrderId <= 0){
 			 throw new IllegalArgumentException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
 		}
-		if(timeStampMs < 0){
-			 throw new IllegalArgumentException("Time cannot have value less than 0. Please Enter valid Time. ");
-		}
-		 if ( workOrderMap.containsKey(workOrderId)) {
+		
+		if ( workOrderMap.containsKey(workOrderId)) {
 			 throw new IllegalArgumentException("The work Order ID ("+workOrderId+") already Exists!");
 		 }
 	     workOrder = new WorkOrder(workOrderId, timeStampMs);
@@ -49,10 +47,12 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 	 	 
 	 @Override
-	public WorkOrder dequeueWorkOrder() {		 
-		 WorkOrder workOrder = workOrderPriorityQueue.pollFirst();
-		 workOrderMap.remove(workOrder.getWorkOrderID());
-		 return workOrder;
+	public WorkOrder dequeueWorkOrder() {
+		WorkOrder workOrder = workOrderPriorityQueue.pollFirst();
+		if(null != workOrder){
+			workOrderMap.remove(workOrder.getWorkOrderID());
+		}		
+		return workOrder;
 	}
 	 
 	 @Override
