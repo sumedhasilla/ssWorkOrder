@@ -28,27 +28,14 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		currentTime = System.currentTimeMillis();
 	}
 	
-	public boolean removeAllWorkOrders(){
-		boolean  flag = false;
-		try{
-			TreeSet<WorkOrder> workOrders = workOrderServiceImpl.getSortedWorkOrder();
-			if(workOrders.size() == 0){
-				flag = true;
-				return flag;
-			}
-			Iterator<WorkOrder> itr = workOrders.iterator();
-			 while(itr.hasNext()) {
-				 workOrderServiceImpl.dequeueWorkOrder();
-			 }
-			 flag=true;
-		}catch(Exception e){
-			 flag = false;
-		}
+	public void removeAllWorkOrders() {
+		while(null != workOrderServiceImpl.dequeueWorkOrder()) {
+			 
+		 }
 		
 		// Making sure that the Map/queue are empty.
 		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
-		return flag;
+		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());		
 	}
 	
 	@Test
@@ -158,23 +145,102 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		
 		long [] expectedOrderArray = {15, 30, 10, 3, 13,11,1,7};		
 		
-		// Test the order of the 
+		// Test the order of the workOrders based on its rank (highest to lowest)
 		TreeSet<WorkOrder> workOrders = workOrderServiceImpl.getSortedWorkOrder();
-		//System.out.println("Printing All workOrders along with its Rank... ");
+		//System.out.println("1. Printing All workOrders along with its Rank... ");
 		
 		Iterator<WorkOrder> itr = workOrders.iterator();
 		int i = 0;
 		while(itr.hasNext()) {
 			 workOrder = itr.next();
 			 assertEquals(expectedOrderArray[i], workOrder.getWorkOrderID());
-			 ++i;
-			// System.out.println("WorkOrder having ID ("+workOrder.getWorkOrderID()+" )Rank = "+ getWorkOrderRank(workOrder) );
-		 }	
+			// System.out.println("WorkOrder having ID ("+workOrder.getWorkOrderID()+", "+workOrder.getTimeStampMs() +" )Rank = "+ getWorkOrderRank(workOrder) );
+			++i;
+			 }	
 		 
 		 //Test2
+		removeAllWorkOrders();
+		workOrders = null;
+		workOrderServiceImpl.enqueueWorkOrder(7, currentTime - 2000);
+		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
+		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
+		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
+		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 3000);
+		workOrderServiceImpl.enqueueWorkOrder(3, currentTime - 1000);
+		workOrderServiceImpl.enqueueWorkOrder(10, currentTime );
+		workOrderServiceImpl.enqueueWorkOrder(13, currentTime - 20002);
 		
+		long[] expectedOrderArray2 = {15, 30, 13, 3, 1,11,7,10};		
+		
+		// Test the order of the workOrders based on its rank (highest to lowest)
+		workOrders = workOrderServiceImpl.getSortedWorkOrder();
+		//System.out.println("2. Printing All workOrders along with its Rank... ");
+		
+		itr = workOrders.iterator();
+		i = 0;
+		while(itr.hasNext()) {
+			 workOrder = itr.next();
+			 assertEquals(expectedOrderArray2[i], workOrder.getWorkOrderID());
+			// System.out.println("WorkOrder having ID ("+workOrder.getWorkOrderID()+" , "+workOrder.getTimeStampMs() +")Rank = "+ getWorkOrderRank(workOrder) );
+			 ++i;
+		 }
 	}
 
+	@Test
+	public void testDeleteWorkOrderById(){
+		removeAllWorkOrders();	// making sure we start the test with empty queue.
+		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
+		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
+		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
+		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
+		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 2000);
+		
+		//Test 1 - Delete an existing/Valid work Order ID
+		assertEquals("WorkOrder (11) Deleted", workOrderServiceImpl.deleteWorkOrderById(11));
+		//End Test 1
+		
+		//Test 2 - Delete a non-existing/InValid Work Order ID
+		assertEquals("Work Order (11) Not Found!", workOrderServiceImpl.deleteWorkOrderById(11));
+		//End Test 2
+		removeAllWorkOrders();
+	}
+	
+	@Test
+	public void testGetWorkOrderPosition(){
+		removeAllWorkOrders();	// making sure we start the test with empty queue.
+		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
+		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
+		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
+		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
+		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 2000);
+		
+		//Test 1 - Find an existing/Valid work Order ID
+		//System.out.println(" found - "+ workOrderServiceImpl.getWorkOrderPosition(11));
+		assertEquals(3, workOrderServiceImpl.getWorkOrderPosition(11));
+		//End Test 1
+		
+		//Test 2 - Find a non-existing/InValid Work Order ID
+		try {
+			 workOrderServiceImpl.getWorkOrderPosition(10);
+		} catch (NullPointerException e) {
+			assertTrue(e.getMessage().contains("The work Order ID (10) not Found!"));
+		}
+		//End Test 2
+		removeAllWorkOrders();
+	}
+	
+	@Test 
+	public void testGetAverageWaitTime(){
+		removeAllWorkOrders();	// making sure we start the test with empty queue.
+		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
+		workOrderServiceImpl.enqueueWorkOrder(30, currentTime-1000);
+		//Test 1 - Find an existing/Valid work Order ID
+		//System.out.println(" Avg Time - "+ workOrderServiceImpl.getAverageWaitTime(currentTime+2000));
+		assertEquals(2500, workOrderServiceImpl.getAverageWaitTime(currentTime+2000));
+		//End Test 1
+		removeAllWorkOrders();
+	}
+	
 	private double getWorkOrderRank(WorkOrder workOrder1){		
 		return CommonUtil.calculateRank(workOrder1);
 	}

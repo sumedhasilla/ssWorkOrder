@@ -84,12 +84,12 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	public long getAverageWaitTime(long currentTime) {
 		WorkOrder workOrder = null;
 		Iterator<WorkOrder> itr = workOrderPriorityQueue.iterator();
-		int totalMilliSeconds = 0;
+		long totalMilliSeconds = 0;
 		int size = workOrderPriorityQueue.size();
-        while(itr.hasNext()) {
+		while(itr.hasNext()) {
         	workOrder = itr.next();	 
-        	totalMilliSeconds += (currentTime - workOrder.getTimeStampMs());	        	
-        }	 
+        	totalMilliSeconds += (currentTime - workOrder.getTimeStampMs());	
+        }
         return totalMilliSeconds/size;
 	}
 	
