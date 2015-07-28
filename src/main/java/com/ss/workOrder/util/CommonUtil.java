@@ -23,17 +23,17 @@ public class CommonUtil {
 	
 		public static  double calculateRank(WorkOrder workOrder) {
 	        
-	        long lCurentTime = System.currentTimeMillis() / 1000L;
+	        long curentTime = System.currentTimeMillis();
 	            
-	        long lWaitSeconds = lCurentTime - workOrder.getTimeStampMs();
-	        double dRank = lWaitSeconds;
+	        long waitTimeMilliSeconds = curentTime - workOrder.getTimeStampMs();
+	        double dRank = waitTimeMilliSeconds;
 	        
 	        if (workOrder.getIdClass() == Constants.VIP_ID || workOrder.getIdClass() == Constants.PRIORITY_ID) {
-	            double dLogWaitSeconds = Math.log(lWaitSeconds);
+	            double dLogWaitSeconds = Math.log(waitTimeMilliSeconds);
 	            if (workOrder.getIdClass() == Constants.VIP_ID) {
-	                dRank = Math.max(4, (2 * lWaitSeconds * dLogWaitSeconds));
+	                dRank = Math.max(4, (2 * waitTimeMilliSeconds * dLogWaitSeconds));
 	            } else {
-	                dRank = Math.max(3, (lWaitSeconds * dLogWaitSeconds));
+	                dRank = Math.max(3, (waitTimeMilliSeconds * dLogWaitSeconds));
 	            }
 	        }
 	        return dRank;
