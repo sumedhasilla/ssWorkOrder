@@ -31,9 +31,13 @@ You should be able to see similar format after running the above command:
 2. To Build and Run Tests: 
 	* 2.1 Right Click Project ssWorkOrder > Click 'Run As' >  Select 'Run Configurations..' > In the Run Window, Select 'Maven Build' and click the 'new' button.
 	* 2.2 In the new Configuration Window, Enter the following values:
+	
 	 Name: ssWorkOrder_mvn
+
 	 Base Directory: Click 'Browse Workspace' button to select this project. 
+	 
 	 Goals: clean install
+	 
 	 JRE TAB: make sure the Runtime is pointing to the JDK 8 Location.
 	 
 	 Click 'Apply' to save the settings and then 'Run' to build project. The Unit Tests will also execute. 
