@@ -66,7 +66,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	@Override
-	public synchronized  String deleteWorkOrderById(long workOrderId) {
+	public synchronized String deleteWorkOrderById(long workOrderId) {
 		WorkOrder workOrder = workOrderMap.get(workOrderId);
         if (workOrder != null) {
         	workOrderPriorityQueue.remove(workOrder);
@@ -114,6 +114,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
          
 		@Override
 		public int compare(WorkOrder workOrder1, WorkOrder workOrder2) {
+			 if(workOrder1.getWorkOrderID() == workOrder2.getWorkOrderID()){
+				 return 0;
+			 }
 			 if (workOrder1.getIdClass() == Constants.MANAGEMENT_OVERRIDE_ID) {
 		            if (workOrder1.getIdClass() == workOrder2.getIdClass()) {
 		                if (workOrder1.getTimeStampMs() < workOrder2.getTimeStampMs()) {

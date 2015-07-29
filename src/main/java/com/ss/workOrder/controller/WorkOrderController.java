@@ -40,6 +40,11 @@ public class WorkOrderController {
 	    public TreeSet<WorkOrder> getAllWorkOrder() {
 	       	return this.workOrderService.getSortedWorkOrder();
 	    }
+	 
+	@RequestMapping("/deleteWorkOrderById")
+	public String deleteWorkOrderById(@RequestParam(value="id") long id){
+		return this.workOrderService.deleteWorkOrderById(id);
+	}
 	
 	 @RequestMapping("/getWorkOrderPosition")
 	    public int getWorkOrderPosition(@RequestParam(value="id") long id) {

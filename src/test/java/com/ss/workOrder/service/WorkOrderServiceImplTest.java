@@ -197,9 +197,16 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		assertEquals("WorkOrder (11) Deleted", workOrderServiceImpl.deleteWorkOrderById(11));
 		//End Test 1
 		
+		// To test the Total number of elements and making sure TreeSet/map are in Sync
+		assertEquals(4, workOrderServiceImpl.getWorkOrderMapSize());
+		assertEquals(workOrderServiceImpl.getWorkOrderPriorityQueueSize(), workOrderServiceImpl.getWorkOrderMapSize());
+				
 		//Test 2 - Delete a non-existing/InValid Work Order ID
 		assertEquals("Work Order (11) Not Found!", workOrderServiceImpl.deleteWorkOrderById(11));
 		//End Test 2
+		
+		
+		
 		removeAllWorkOrders();
 	}
 	
