@@ -57,10 +57,7 @@ If you may see similar log lines, the application is running successfully in **P
 ### REST API Endpoints to Test the Application workflow:
 
 #### To Add a new Work Order to the list:
-* URL Endpoint:  http://localhost:8090/enqueue
-
-* curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d "{\"workOrderID\" : 60, \"timeStampMs\":555555}" http://l
-ocalhost:8090/enqueue
+* curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d "{\"workOrderID\" : 60, \"timeStampMs\":555555}" http://localhost:8090/enqueue
 
 * Response:
 HTTP/1.1 201 Created
@@ -68,7 +65,8 @@ HTTP/1.1 201 Created
 {"workOrderID":60,"timeStampMs":555555,"idClass":3}
 
 * Expected Result for valid input: JSON response containing workOrderID, timeStampMs and its corresponding class
-* [TODO: Validate workOrder ID and Time should not be Empty values]
+* URL Endpoint:  http://localhost:8090/enqueue
+* [] TODO: Validate workOrder ID and Time should not be Empty values
 
 #### To remove and view the top ID from the queue:
 * http://localhost:8090/dequeue
