@@ -1,7 +1,6 @@
 package com.ss.workOrder.service;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -22,11 +21,6 @@ import com.ss.workOrder.util.Constants;
 public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkOrderServiceImpl.class);
-	private HashMap<Long, WorkOrder> workOrderMap = new HashMap<Long, WorkOrder>();
-	
-	public synchronized int getWorkOrderMapSize() {
-		return workOrderMap.size();
-	}
 
 	public synchronized int getWorkOrderPriorityQueueSize() {
 		return workOrderPriorityQueue.size();
@@ -36,28 +30,24 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	
 	 @Override
 	public  synchronized WorkOrder enqueueWorkOrder(long workOrderId, long timeStampMs) {
-		 WorkOrder workOrder = null;
+		WorkOrder workOrder = null;
 		if(workOrderId <= 0){
 			 throw new BadRequestException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
 		}
-		
-		if ( workOrderMap.containsKey(workOrderId)) {
+
+		workOrder = new WorkOrder(workOrderId, timeStampMs);
+	    if (workOrderPriorityQueue.contains(workOrder)) {
 			 throw new IdAlreadyExistsException("The work Order ID ("+workOrderId+") already Exists!");
-		 }
-	     workOrder = new WorkOrder(workOrderId, timeStampMs);
-		 workOrderPriorityQueue.add(workOrder);
-		 workOrderMap.put(workOrderId, workOrder);
-		 LOGGER.debug("Work order added");
-		 return workOrder;
+		}
+		
+	    workOrderPriorityQueue.add(workOrder);
+		
+	    return workOrder;
 	}
 	 	 
 	 @Override
 	public synchronized  WorkOrder dequeueWorkOrder() {
-		WorkOrder workOrder = workOrderPriorityQueue.pollFirst();
-		if(null != workOrder){
-			workOrderMap.remove(workOrder.getWorkOrderID());
-		}
-		return workOrder;
+		return workOrderPriorityQueue.pollFirst();
 	}
 	 
 	 @Override
@@ -67,10 +57,8 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	@Override
 	public synchronized String deleteWorkOrderById(long workOrderId) {
-		WorkOrder workOrder = workOrderMap.get(workOrderId);
-        if (workOrder != null) {
-        	workOrderPriorityQueue.remove(workOrder);
-            workOrderMap.remove(workOrderId);
+		WorkOrder dummyWorkOrder = new WorkOrder(workOrderId, 0);		//Dummy WorkOrder to match WorkOrder in Queue
+        if (workOrderPriorityQueue.remove(dummyWorkOrder)) {
             return "WorkOrder ("+workOrderId+") Deleted";
         } 
         return "Work Order ("+workOrderId+") Not Found!";
@@ -78,19 +66,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	@Override
 	public synchronized  int getWorkOrderPosition(long workOrderId) {
-		WorkOrder workOrder = workOrderMap.get(workOrderId);
-		if (workOrder != null) {			
-			int position= 0;
-			Iterator<WorkOrder> itr = workOrderPriorityQueue.iterator();
-			while(itr.hasNext()) {
-				 workOrder = itr.next();
-				 if(workOrderId == workOrder.getWorkOrderID()){
-					 return position;
-				 }
-				 ++position;
-				 }	
-		}
-		 throw new NotFoundException("The work Order ID ("+workOrderId+") not Found!");
+		WorkOrder workOrder = null;
+		int position= 0;
+		Iterator<WorkOrder> itr = workOrderPriorityQueue.iterator();
+		while(itr.hasNext()) {
+			workOrder = itr.next();
+			if(workOrderId == workOrder.getWorkOrderID()){
+				 return position;
+			}
+			++position;
+		}	
+		
+		throw new NotFoundException("The work Order ID ("+workOrderId+") not Found!");
 	}
 	
 	@Override

@@ -34,18 +34,14 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		 }
 		
 		// Making sure that the Map/queue are empty.
-		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
 		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());		
 	}
 	
 	@Test
 	public void testEnqueueWorkOrder() {
+		removeAllWorkOrders(); //Making sure the priority queue is empty before the test.
 		
-		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
-		
-		// Test1 - Add multiple WorkOrders containing where some of them have equal Ranks
-		
+		// Test1 - Add multiple WorkOrders containing where some of them have equal Ranks		
 		for (int i = 1; i <= 10; ++i) {
 			workOrder = workOrderServiceImpl.enqueueWorkOrder(i, currentTime - (i * 1000));
 			assertNotNull("Error with WorkOrder.", workOrder);	
@@ -55,10 +51,6 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		workOrderServiceImpl.enqueueWorkOrder(1000, currentTime);
 		workOrderServiceImpl.enqueueWorkOrder(1003, currentTime);
 		workOrderServiceImpl.enqueueWorkOrder(1005, currentTime + 1000);
-		
-		// To test the Total number of elements and making sure TreeSet/map are in Sync
-		assertEquals(13, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(workOrderServiceImpl.getWorkOrderPriorityQueueSize(), workOrderServiceImpl.getWorkOrderMapSize());
 		
 		//  Test to check enqueue process for duplicate WorkOrder ID's.
 		try {
@@ -82,8 +74,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		}
 		
 		// To test the Total number of elements and making sure TreeSet/map are in Sync
-		assertEquals(13, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(workOrderServiceImpl.getWorkOrderPriorityQueueSize(), workOrderServiceImpl.getWorkOrderMapSize());
+		assertEquals(13, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
 		
 		removeAllWorkOrders();
 	}
@@ -101,7 +92,6 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		assertNotNull("Error with WorkOrder.", workOrder);		
 		assertEquals(4, workOrder.getWorkOrderID());
 		assertEquals(39, workOrder.getTimeStampMs());		
-		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
 		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());		
 		// End Test 1
 		
@@ -123,8 +113,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		assertEquals(15, workOrder.getWorkOrderID());
 		
 		// To test the Total number of elements and making sure TreeSet/map are in Sync
-		assertEquals(3, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(workOrderServiceImpl.getWorkOrderPriorityQueueSize(), workOrderServiceImpl.getWorkOrderMapSize());
+		assertEquals(3, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
 		// End Test3
 		removeAllWorkOrders();			
 	}
@@ -198,14 +187,11 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		//End Test 1
 		
 		// To test the Total number of elements and making sure TreeSet/map are in Sync
-		assertEquals(4, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(workOrderServiceImpl.getWorkOrderPriorityQueueSize(), workOrderServiceImpl.getWorkOrderMapSize());
+		assertEquals(4, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
 				
 		//Test 2 - Delete a non-existing/InValid Work Order ID
 		assertEquals("Work Order (11) Not Found!", workOrderServiceImpl.deleteWorkOrderById(11));
 		//End Test 2
-		
-		
 		
 		removeAllWorkOrders();
 	}

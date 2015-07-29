@@ -8,25 +8,33 @@ import com.ss.workOrder.entities.WorkOrder;
 @Service
 public interface WorkOrderService {
 
-	/** Method to add new WorkOrder to Priority Queue */
+	/** Method to add new WorkOrder to Priority Queue
+	 * @param workOrderId
+	 * @param timeStampMs
+	 * @return WorkOrder */
 	public WorkOrder enqueueWorkOrder(long workOrderId,long timeStampMs);
 	
-	/** Method to return and remove TOP WorkOrder from Priority Queue */
+	/** Method to return and remove TOP WorkOrder from Priority Queue 
+	 * @return WorkOrder */
 	public WorkOrder dequeueWorkOrder();
 	
-	/** Method to get WorkOrder Priority Queue sorted from highest ranked to lowest */
+	/** Method to get WorkOrder Priority Queue sorted from highest ranked to lowest 
+	 * @return TreeSet<WorkOrder> */
 	public TreeSet<WorkOrder> getSortedWorkOrder();
 	
-	/** Method to delete specific WorkOrder based on WorkOrderID */
+	/** Method to delete specific WorkOrder based on WorkOrderID 
+	 * @param workOrderId 
+	 * @return String */
 	public String deleteWorkOrderById(long workOrderId);
-	
-	/** Method to obtain WorkOrder based on its ID *//*
-	public WorkOrder getWorkOrderById(int id);*/
-	
-	/** Method to obtain the position of the WorkOrder */
+		
+	/** Method to obtain the position of the WorkOrder  
+	 * @param workOrderId 
+	 * @return int */
 	public int getWorkOrderPosition(long workOrderId);
 	
-	/** Method to obtain average wait time for all WorkOrders in Priority Queue */
+	/** Method to obtain average wait time for all WorkOrders in Priority Queue 
+	 * @param currentTime
+	 * @return averageWaitTime */
 	public long getAverageWaitTime(long currentTime);
 		
 }
