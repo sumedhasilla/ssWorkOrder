@@ -24,18 +24,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkOrderServiceImpl.class);
 	private HashMap<Long, WorkOrder> workOrderMap = new HashMap<Long, WorkOrder>();
 	
-	public int getWorkOrderMapSize() {
+	public synchronized int getWorkOrderMapSize() {
 		return workOrderMap.size();
 	}
 
-	public int getWorkOrderPriorityQueueSize() {
+	public synchronized int getWorkOrderPriorityQueueSize() {
 		return workOrderPriorityQueue.size();
 	}
 
 	private TreeSet<WorkOrder> workOrderPriorityQueue = new TreeSet<WorkOrder>(workOrderComparator);
 	
 	 @Override
-	public WorkOrder enqueueWorkOrder(long workOrderId, long timeStampMs) {
+	public  synchronized WorkOrder enqueueWorkOrder(long workOrderId, long timeStampMs) {
 		 WorkOrder workOrder = null;
 		if(workOrderId <= 0){
 			 throw new BadRequestException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
@@ -52,7 +52,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 	 	 
 	 @Override
-	public WorkOrder dequeueWorkOrder() {
+	public synchronized  WorkOrder dequeueWorkOrder() {
 		WorkOrder workOrder = workOrderPriorityQueue.pollFirst();
 		if(null != workOrder){
 			workOrderMap.remove(workOrder.getWorkOrderID());
@@ -61,12 +61,12 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 	 
 	 @Override
-	public TreeSet<WorkOrder> getSortedWorkOrder() {			
+	public synchronized  TreeSet<WorkOrder> getSortedWorkOrder() {			
 		return workOrderPriorityQueue;
 	}
 
 	@Override
-	public String deleteWorkOrderById(long workOrderId) {
+	public synchronized  String deleteWorkOrderById(long workOrderId) {
 		WorkOrder workOrder = workOrderMap.get(workOrderId);
         if (workOrder != null) {
         	workOrderPriorityQueue.remove(workOrder);
@@ -77,7 +77,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	@Override
-	public int getWorkOrderPosition(long workOrderId) {
+	public synchronized  int getWorkOrderPosition(long workOrderId) {
 		WorkOrder workOrder = workOrderMap.get(workOrderId);
 		if (workOrder != null) {			
 			int position= 0;
@@ -94,7 +94,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 	
 	@Override
-	public long getAverageWaitTime(long currentTime) {
+	public  synchronized long getAverageWaitTime(long currentTime) {
 		WorkOrder workOrder = null;
 		Iterator<WorkOrder> itr = workOrderPriorityQueue.iterator();
 		long totalMilliSeconds = 0;
@@ -143,6 +143,4 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		        return 1;
 		}
     };
-
-
 }

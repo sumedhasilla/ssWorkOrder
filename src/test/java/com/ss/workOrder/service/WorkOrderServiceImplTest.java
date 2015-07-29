@@ -44,7 +44,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
 		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
 		
-		// Test1 - Add multiple WorkOrders containing equal Ranks
+		// Test1 - Add multiple WorkOrders containing where some of them have equal Ranks
 		
 		for (int i = 1; i <= 10; ++i) {
 			workOrder = workOrderServiceImpl.enqueueWorkOrder(i, currentTime - (i * 1000));
@@ -91,8 +91,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 	@Test
 	public void testDequeueWorkOrder() {
 		//Making sure the priority queue is empty before the test.
-		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
-		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());
+		removeAllWorkOrders();
 
 		//Start Test 1. Add single Work Order and then dequeue (Display the Work Order and remove it from the Queue.)
 		workOrderServiceImpl.enqueueWorkOrder(4, 39);
@@ -101,8 +100,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		
 		assertNotNull("Error with WorkOrder.", workOrder);		
 		assertEquals(4, workOrder.getWorkOrderID());
-		assertEquals(39, workOrder.getTimeStampMs());
-		
+		assertEquals(39, workOrder.getTimeStampMs());		
 		assertEquals(0, workOrderServiceImpl.getWorkOrderMapSize());
 		assertEquals(0, workOrderServiceImpl.getWorkOrderPriorityQueueSize());		
 		// End Test 1
@@ -241,6 +239,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		assertEquals(2500, workOrderServiceImpl.getAverageWaitTime(currentTime+2000));
 		//End Test 1
 		removeAllWorkOrders();
+		
 		//Test 2. Find Average Wait time in an empty queue.
 		try{
 			workOrderServiceImpl.getAverageWaitTime(currentTime);
