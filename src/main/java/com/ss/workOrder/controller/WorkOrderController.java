@@ -1,5 +1,7 @@
 package com.ss.workOrder.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ss.workOrder.entities.WorkOrder;
 import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.service.WorkOrderService;
+
 import org.springframework.http.HttpStatus;
 
 @RestController
@@ -51,18 +54,25 @@ public class WorkOrderController {
 	 
 	@RequestMapping(value = "/deleteWorkOrderById",
 			method=RequestMethod.DELETE)
-	public String deleteWorkOrderById(@RequestParam(value="id") long id){
-		return this.workOrderService.deleteWorkOrderById(id);
+	public Map<String, String> deleteWorkOrderById(@RequestParam(value="id") long id){
+		Map<String, String> map = new HashMap<String, String>();	
+		map.put("deleteWorkOrderResponseStr", this.workOrderService.deleteWorkOrderById(id));
+		return map;
 	}
 	
 	 @RequestMapping("/workOrderPosition")
-	    public int getWorkOrderPosition(@RequestParam(value="id") long id) {
-		    return this.workOrderService.getWorkOrderPosition(id);
+	    public Map<String, Integer> getWorkOrderPosition(@RequestParam(value="id") long id) {
+		    Map<String, Integer> map = new HashMap<String, Integer>();	
+			map.put("workOrderPositionResponseStr", this.workOrderService.getWorkOrderPosition(id));
+			return map;
 	    }
 	 
 	 @RequestMapping("/averageWaitTime")
-	   public long getAverageWaitTme(@RequestParam(value="currentTime") long currentTime){
-		 return this.workOrderService.getAverageWaitTime(currentTime);
+	   public Map<String, Long> getAverageWaitTme(@RequestParam(value="currentTime") long currentTime){
+		
+			Map<String, Long> map = new HashMap<String, Long>();	
+			map.put("averageWaitTimeResponseStr", this.workOrderService.getAverageWaitTime(currentTime));
+			return map;
 	   }
 	 
 }
