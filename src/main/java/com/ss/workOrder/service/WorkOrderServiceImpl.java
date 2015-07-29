@@ -1,11 +1,8 @@
 package com.ss.workOrder.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.ws.rs.BadRequestException;
