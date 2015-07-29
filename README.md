@@ -18,6 +18,8 @@ This application is packaged as a JAR which has embedded Tomcat 8. Other applica
       * **java -jar target/ssWorkOrder-1.0.jar**
 
 You should be able to see similar format after running the above command:
+
+
 2015-07-28 10:44:26.689  INFO 7780 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8090 (http)
 2015-07-28 10:44:26.692  INFO 7780 --- [           main] com.ss.workOrder.SsWorkOrderApplication  : Started SsWorkOrderApplication in 7.835 seconds (JVM running for 8.843)
 
@@ -37,11 +39,11 @@ You should be able to see similar format after running the above command:
 	 Click 'Apply' to save the settings and then 'Run' to build project. The Unit Tests will also execute. 
 	
 3. To Run the application: After the project is build successfully, you may right click the project > click  'Run As' > Spring Boot App. 
-	If you may see similar log lines:
-	2015-07-28 23:18:12.202  INFO 9972 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8090 (http)
-2015-07-28 23:18:12.205  INFO 9972 --- [           main] com.ss.workOrder.SsWorkOrderApplication  : Started SsWorkOrderApplication in 5.128 seconds (JVM running for 6.129)
 
-* The project is running successfully in localhost port 8090.
+If you may see similar log lines, the application is running successfully in **Port 8090**:
+
+2015-07-28 23:18:12.202  INFO 9972 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8090 (http)
+2015-07-28 23:18:12.205  INFO 9972 --- [           main] com.ss.workOrder.SsWorkOrderApplication  : Started SsWorkOrderApplication in 5.128 seconds (JVM running for 6.129)
 
 ### Assumptions for the Project:
 1. Work Order ID and Time value are based on 'long' data Type Format. All time based calculations are based on Unix TimeStamp in MilliSeconds.
