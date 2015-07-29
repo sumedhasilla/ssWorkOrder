@@ -52,23 +52,37 @@ MANAGEMENT_OVERRIDE_ID = 3;
 # REST API Endpoints to Test the Application workflow:
 
 1. To Add a new Work Order to the list:
-http://localhost:8090/enqueue/?id=60&time=678889
+URL Endpoint:  http://localhost:8090/enqueue
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d "{\"workOrderID\" : 60, \"timeStampMs\":555555}" http://l
+ocalhost:8090/enqueue
+
+Response:
+HTTP/1.1 201 Created
+....
+{"workOrderID":60,"timeStampMs":555555,"idClass":3}
 
 Expected Result for valid input: JSON response containing workOrderID, timeStampMs and its corresponding class
- 
+TODO: Validate workOrder ID and Time should not be Empty values
+
 2. To remove and view the top ID from the queue:
 http://localhost:8090/dequeue
 
 Expected Result for valid input: JSON response containing workOrderID, timeStampMs and its corresponding class
 
 3. To view the queue in sorted order (highest rank to Lowest)
-http://localhost:8090/getWorkOrderList
+http://localhost:8090/workOrdersSorted
 
 4. to remove a specific ID from the queue.
-http://localhost:8090/deleteWorkOrderById?id=6
+
+curl -i -X DELETE "http://localhost:8090/deleteWorkOrderById?id=60
+
+HTTP/1.1 200 OK
+.....
+WorkOrder (60) Deleted
 
 5. To find the position of specific ID from the queue:
-http://localhost:8090/getWorkOrderPosition?id=60
+http://localhost:8090/workOrderPosition?id=60
 
 6. to get the average wait time.
-http://localhost:8090/getAverageWaitTime?currentTime=4433232
+http://localhost:8090/averageWaitTime?currentTime=4433232
