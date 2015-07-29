@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.ss.workOrder.SsWorkOrderApplicationTests;
 import com.ss.workOrder.entities.WorkOrder;
 import com.ss.workOrder.exception.IdAlreadyExistsException;
+import com.ss.workOrder.exception.NoContentException;
 import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.util.CommonUtil;
 
@@ -235,11 +236,19 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		removeAllWorkOrders();	// making sure we start the test with empty queue.
 		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
 		workOrderServiceImpl.enqueueWorkOrder(30, currentTime-1000);
-		//Test 1 - Find an existing/Valid work Order ID
+		//Test 1 - Find average wait time for queue containing work Orders.
 		//System.out.println(" Avg Time - "+ workOrderServiceImpl.getAverageWaitTime(currentTime+2000));
 		assertEquals(2500, workOrderServiceImpl.getAverageWaitTime(currentTime+2000));
 		//End Test 1
 		removeAllWorkOrders();
+		//Test 2. Find Average Wait time in an empty queue.
+		try{
+			workOrderServiceImpl.getAverageWaitTime(currentTime);
+		}catch(NoContentException e){
+			assertTrue(e.getMessage().contains("No Work Orders Present in the Queue!"));
+		}
+		//End Test2
+		
 	}
 	
 	private double getWorkOrderRank(WorkOrder workOrder1){		

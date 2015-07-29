@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 
 import com.ss.workOrder.entities.WorkOrder;
 import com.ss.workOrder.exception.IdAlreadyExistsException;
+import com.ss.workOrder.exception.NoContentException;
 import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.util.CommonUtil;
 import com.ss.workOrder.util.Constants;
@@ -98,6 +99,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		Iterator<WorkOrder> itr = workOrderPriorityQueue.iterator();
 		long totalMilliSeconds = 0;
 		int size = workOrderPriorityQueue.size();
+		if(0 == size){
+			throw new NoContentException("No Work Orders Present in the Queue!");
+		}
 		while(itr.hasNext()) {
         	workOrder = itr.next();	 
         	totalMilliSeconds += (currentTime - workOrder.getTimeStampMs());	

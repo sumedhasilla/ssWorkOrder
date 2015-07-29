@@ -36,7 +36,7 @@ public class WorkOrderController {
 			 }	       	
 	    }
 	
-	 @RequestMapping("/workOrderList")
+	 @RequestMapping("/getWorkOrderList")
 	    public TreeSet<WorkOrder> getAllWorkOrder() {
 	       	return this.workOrderService.getSortedWorkOrder();
 	    }
@@ -46,14 +46,9 @@ public class WorkOrderController {
 		    return this.workOrderService.getWorkOrderPosition(id);
 	    }
 	 
-	 @RequestMapping("/getAverageWaitTme")
+	 @RequestMapping("/getAverageWaitTime")
 	   public long getAverageWaitTme(@RequestParam(value="currentTime") long currentTime){
 		 return this.workOrderService.getAverageWaitTime(currentTime);
 	   }
 	 
-	/*@ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT )
-    public String handleIdAlreadyExistsException(IdAlreadyExistsException e) {    
-		return e.getMessage();
-    }*/
 }
