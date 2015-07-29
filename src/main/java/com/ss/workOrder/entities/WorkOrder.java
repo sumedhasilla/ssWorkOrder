@@ -1,15 +1,17 @@
 package com.ss.workOrder.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ss.workOrder.util.CommonUtil;
-import com.ss.workOrder.util.Constants;
 
 public class WorkOrder {
+	
 	long workOrderID;
 	long timeStampMs;
 	byte idClass;
  
- public WorkOrder( long ID, long timeValue){
-	 this.workOrderID = ID;
+ public WorkOrder( @JsonProperty("workOrderID") long id, @JsonProperty("timeStampMs")long timeValue){
+	 this.workOrderID = id;
 	 this.timeStampMs = timeValue;
 	 this.idClass=CommonUtil.getIdClassFromId(workOrderID);
  }

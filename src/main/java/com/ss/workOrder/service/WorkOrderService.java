@@ -9,10 +9,9 @@ import com.ss.workOrder.entities.WorkOrder;
 public interface WorkOrderService {
 
 	/** Method to add new WorkOrder to Priority Queue
-	 * @param workOrderId
-	 * @param timeStampMs
+	 * @param WorkOrder
 	 * @return WorkOrder */
-	public WorkOrder enqueueWorkOrder(long workOrderId,long timeStampMs);
+	public WorkOrder enqueueWorkOrder(WorkOrder workOrder);
 	
 	/** Method to return and remove TOP WorkOrder from Priority Queue 
 	 * @return WorkOrder */

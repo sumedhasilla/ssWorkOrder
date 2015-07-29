@@ -9,6 +9,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import com.ss.workOrder.SsWorkOrderApplicationTests;
 import com.ss.workOrder.entities.WorkOrder;
 import com.ss.workOrder.exception.IdAlreadyExistsException;
@@ -43,32 +44,32 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		
 		// Test1 - Add multiple WorkOrders containing where some of them have equal Ranks		
 		for (int i = 1; i <= 10; ++i) {
-			workOrder = workOrderServiceImpl.enqueueWorkOrder(i, currentTime - (i * 1000));
+			workOrder = workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(i, currentTime - (i * 1000)));
 			assertNotNull("Error with WorkOrder.", workOrder);	
 		}
 		// End Test1
 		// Test2 - Add multiple WorkOrders containing same time and future Time Value
-		workOrderServiceImpl.enqueueWorkOrder(1000, currentTime);
-		workOrderServiceImpl.enqueueWorkOrder(1003, currentTime);
-		workOrderServiceImpl.enqueueWorkOrder(1005, currentTime + 1000);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1000, currentTime));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1003, currentTime));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1005, currentTime + 1000));
 		
 		//  Test to check enqueue process for duplicate WorkOrder ID's.
 		try {
-			workOrderServiceImpl.enqueueWorkOrder(1005, currentTime + 1000);
+			workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1005, currentTime + 1000));
 		} catch (IdAlreadyExistsException e) {
 			assertTrue(e.getMessage().contains("The work Order ID (1005) already Exists!"));
 		}
 		
 		// Test to check if WorkOrder ID = 0. 
 		try {
-			workOrderServiceImpl.enqueueWorkOrder(0, currentTime);
+			workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(0, currentTime));
 		} catch (BadRequestException e) {
 			assertTrue(e.getMessage().contains("Work Order ID cannot have value less than or equal to 0"));
 		}
 		
 		// Test to check if WorkOrder ID is a negative value. 
 		try {
-			workOrderServiceImpl.enqueueWorkOrder(-30, currentTime);
+			workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(-30, currentTime));
 		} catch (BadRequestException e) {
 			assertTrue(e.getMessage().contains("Work Order ID cannot have value less than or equal to 0"));
 		}
@@ -85,7 +86,7 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		removeAllWorkOrders();
 
 		//Start Test 1. Add single Work Order and then dequeue (Display the Work Order and remove it from the Queue.)
-		workOrderServiceImpl.enqueueWorkOrder(4, 39);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(4, 39));
 		workOrder = null;
 		workOrder = workOrderServiceImpl.dequeueWorkOrder(); // dequeue.
 		
@@ -100,11 +101,11 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		//End Test 2
 		
 		// Start Test 3. Add multiple Work Orders and then test the dequeue results.
-		workOrderServiceImpl.enqueueWorkOrder(15, 69);
-		workOrderServiceImpl.enqueueWorkOrder(30, 37);
-		workOrderServiceImpl.enqueueWorkOrder(11, 33);
-		workOrderServiceImpl.enqueueWorkOrder(7, 33);
-		workOrderServiceImpl.enqueueWorkOrder(1, 33);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(15, 69));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(30, 37));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(11, 33));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(7, 33));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1, 33));
 		
 		workOrder = workOrderServiceImpl.dequeueWorkOrder();
 		assertEquals(30, workOrder.getWorkOrderID());
@@ -121,14 +122,14 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 	@Test
 	public void testGetSortedWorkOrder() {	
 		removeAllWorkOrders();	// making sure we start the test with empty queue.
-		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
-		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
-		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
-		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 2000);
-		workOrderServiceImpl.enqueueWorkOrder(3, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(10, currentTime - 4000);
-		workOrderServiceImpl.enqueueWorkOrder(13, currentTime - 3002);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(7, currentTime));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(30, currentTime - 1000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(11, currentTime - 2828));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(15, currentTime - 2822));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1, currentTime - 2000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(3, currentTime - 1000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(10, currentTime - 4000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(13, currentTime - 3002));
 		
 		long [] expectedOrderArray = {15, 30, 10, 3, 13,11,1,7};		
 		
@@ -148,14 +149,14 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		 //Test2
 		removeAllWorkOrders();
 		workOrders = null;
-		workOrderServiceImpl.enqueueWorkOrder(7, currentTime - 2000);
-		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
-		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
-		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 3000);
-		workOrderServiceImpl.enqueueWorkOrder(3, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(10, currentTime );
-		workOrderServiceImpl.enqueueWorkOrder(13, currentTime - 20002);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(7, currentTime - 2000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(30, currentTime - 1000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(11, currentTime - 2828));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(15, currentTime - 2822));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1, currentTime - 3000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(3, currentTime - 1000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(10, currentTime ));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(13, currentTime - 20002));
 		
 		long[] expectedOrderArray2 = {15, 30, 13, 3, 1,11,7,10};		
 		
@@ -176,11 +177,11 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 	@Test
 	public void testDeleteWorkOrderById(){
 		removeAllWorkOrders();	// making sure we start the test with empty queue.
-		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
-		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
-		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
-		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 2000);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(7, currentTime));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(30, currentTime - 1000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(11, currentTime - 2828));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(15, currentTime - 2822));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(1, currentTime - 2000));
 		
 		//Test 1 - Delete an existing/Valid work Order ID
 		assertEquals("WorkOrder (11) Deleted", workOrderServiceImpl.deleteWorkOrderById(11));
@@ -199,10 +200,10 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 	@Test
 	public void testGetWorkOrderPosition(){
 		removeAllWorkOrders();	// making sure we start the test with empty queue.
-		workOrderServiceImpl.enqueueWorkOrder(60, currentTime - 2000);
-		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 822);
-		workOrderServiceImpl.enqueueWorkOrder(45, currentTime - 1822);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(60, currentTime - 2000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(30, currentTime - 1000));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(15, currentTime - 822));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(45, currentTime - 1822));
 		
 		//Test 1 - Find an existing/Valid work Order ID
 		//System.out.println(" found - "+ workOrderServiceImpl.getWorkOrderPosition(11));
@@ -225,8 +226,8 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 	@Test 
 	public void testGetAverageWaitTime(){
 		removeAllWorkOrders();	// making sure we start the test with empty queue.
-		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
-		workOrderServiceImpl.enqueueWorkOrder(30, currentTime-1000);
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(7, currentTime));
+		workOrderServiceImpl.enqueueWorkOrder(new WorkOrder(30, currentTime-1000));
 		//Test 1 - Find average wait time for queue containing work Orders.
 		//System.out.println(" Avg Time - "+ workOrderServiceImpl.getAverageWaitTime(currentTime+2000));
 		assertEquals(2500, workOrderServiceImpl.getAverageWaitTime(currentTime+2000));

@@ -1,15 +1,19 @@
 package com.ss.workOrder.controller;
 
 import java.util.TreeSet;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ss.workOrder.entities.WorkOrder;
 import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.service.WorkOrderService;
-
+import org.springframework.http.HttpStatus;
 
 @RestController
 public class WorkOrderController {
@@ -17,9 +21,13 @@ public class WorkOrderController {
 	@Autowired
 	private WorkOrderService workOrderService;
 	
-	@RequestMapping("/enqueue")
-    public WorkOrder workOrderPQ(@RequestParam(value="id")  long id, @RequestParam(value="time") long time) {
-       	WorkOrder workOrder = this.workOrderService.enqueueWorkOrder(id,time);
+	@RequestMapping(value="/enqueue", 
+			method=RequestMethod.POST,
+			consumes={"application/json"},
+			produces={"application/json"})	
+	@ResponseStatus(HttpStatus.CREATED)
+	public WorkOrder workOrderPQ(@RequestBody WorkOrder workOrder) {
+		workOrder = this.workOrderService.enqueueWorkOrder(workOrder);
        	if(null == workOrder){
 			 throw new NullPointerException("Error with Enqueue process. ");
 		}
@@ -36,22 +44,23 @@ public class WorkOrderController {
 			 }	       	
 	    }
 	
-	 @RequestMapping("/getWorkOrderList")
+	 @RequestMapping("/workOrdersSorted")
 	    public TreeSet<WorkOrder> getAllWorkOrder() {
 	       	return this.workOrderService.getSortedWorkOrder();
 	    }
 	 
-	@RequestMapping("/deleteWorkOrderById")
+	@RequestMapping(value = "/deleteWorkOrderById",
+			method=RequestMethod.DELETE)
 	public String deleteWorkOrderById(@RequestParam(value="id") long id){
 		return this.workOrderService.deleteWorkOrderById(id);
 	}
 	
-	 @RequestMapping("/getWorkOrderPosition")
+	 @RequestMapping("/workOrderPosition")
 	    public int getWorkOrderPosition(@RequestParam(value="id") long id) {
 		    return this.workOrderService.getWorkOrderPosition(id);
 	    }
 	 
-	 @RequestMapping("/getAverageWaitTime")
+	 @RequestMapping("/averageWaitTime")
 	   public long getAverageWaitTme(@RequestParam(value="currentTime") long currentTime){
 		 return this.workOrderService.getAverageWaitTime(currentTime);
 	   }

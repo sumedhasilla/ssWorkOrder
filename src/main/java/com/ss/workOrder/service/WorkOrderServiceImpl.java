@@ -29,15 +29,14 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	private TreeSet<WorkOrder> workOrderPriorityQueue = new TreeSet<WorkOrder>(workOrderComparator);
 	
 	 @Override
-	public  synchronized WorkOrder enqueueWorkOrder(long workOrderId, long timeStampMs) {
-		WorkOrder workOrder = null;
-		if(workOrderId <= 0){
+	public  synchronized WorkOrder enqueueWorkOrder(WorkOrder workOrder) {
+		
+		if(workOrder.getWorkOrderID() <= 0){
 			 throw new BadRequestException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
 		}
 
-		workOrder = new WorkOrder(workOrderId, timeStampMs);
 	    if (workOrderPriorityQueue.contains(workOrder)) {
-			 throw new IdAlreadyExistsException("The work Order ID ("+workOrderId+") already Exists!");
+			 throw new IdAlreadyExistsException("The work Order ID ("+workOrder.getWorkOrderID()+") already Exists!");
 		}
 		
 	    workOrderPriorityQueue.add(workOrder);
