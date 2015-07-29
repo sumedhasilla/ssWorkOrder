@@ -5,15 +5,14 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.rules.ExpectedException;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.ws.rs.BadRequestException;
 
+import org.junit.Before;
+import org.junit.Test;
 import com.ss.workOrder.SsWorkOrderApplicationTests;
 import com.ss.workOrder.entities.WorkOrder;
+import com.ss.workOrder.exception.IdAlreadyExistsException;
+import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.util.CommonUtil;
 
 public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
@@ -63,21 +62,21 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 		//  Test to check enqueue process for duplicate WorkOrder ID's.
 		try {
 			workOrderServiceImpl.enqueueWorkOrder(1005, currentTime + 1000);
-		} catch (IllegalArgumentException e) {
+		} catch (IdAlreadyExistsException e) {
 			assertTrue(e.getMessage().contains("The work Order ID (1005) already Exists!"));
 		}
 		
 		// Test to check if WorkOrder ID = 0. 
 		try {
 			workOrderServiceImpl.enqueueWorkOrder(0, currentTime);
-		} catch (IllegalArgumentException e) {
+		} catch (BadRequestException e) {
 			assertTrue(e.getMessage().contains("Work Order ID cannot have value less than or equal to 0"));
 		}
 		
 		// Test to check if WorkOrder ID is a negative value. 
 		try {
 			workOrderServiceImpl.enqueueWorkOrder(-30, currentTime);
-		} catch (IllegalArgumentException e) {
+		} catch (BadRequestException e) {
 			assertTrue(e.getMessage().contains("Work Order ID cannot have value less than or equal to 0"));
 		}
 		
@@ -208,21 +207,23 @@ public class WorkOrderServiceImplTest extends SsWorkOrderApplicationTests{
 	@Test
 	public void testGetWorkOrderPosition(){
 		removeAllWorkOrders();	// making sure we start the test with empty queue.
-		workOrderServiceImpl.enqueueWorkOrder(7, currentTime);
+		workOrderServiceImpl.enqueueWorkOrder(60, currentTime - 2000);
 		workOrderServiceImpl.enqueueWorkOrder(30, currentTime - 1000);
-		workOrderServiceImpl.enqueueWorkOrder(11, currentTime - 2828);
-		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 2822);
-		workOrderServiceImpl.enqueueWorkOrder(1, currentTime - 2000);
+		workOrderServiceImpl.enqueueWorkOrder(15, currentTime - 822);
+		workOrderServiceImpl.enqueueWorkOrder(45, currentTime - 1822);
 		
 		//Test 1 - Find an existing/Valid work Order ID
 		//System.out.println(" found - "+ workOrderServiceImpl.getWorkOrderPosition(11));
-		assertEquals(3, workOrderServiceImpl.getWorkOrderPosition(11));
+		assertEquals(0, workOrderServiceImpl.getWorkOrderPosition(60));
+		assertEquals(1, workOrderServiceImpl.getWorkOrderPosition(45));
+		assertEquals(2, workOrderServiceImpl.getWorkOrderPosition(30));
+		assertEquals(3, workOrderServiceImpl.getWorkOrderPosition(15));
 		//End Test 1
 		
 		//Test 2 - Find a non-existing/InValid Work Order ID
 		try {
 			 workOrderServiceImpl.getWorkOrderPosition(10);
-		} catch (NullPointerException e) {
+		} catch (NotFoundException e) {
 			assertTrue(e.getMessage().contains("The work Order ID (10) not Found!"));
 		}
 		//End Test 2

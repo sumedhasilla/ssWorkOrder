@@ -1,15 +1,22 @@
 package com.ss.workOrder.service;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.ws.rs.BadRequestException;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 
 import com.ss.workOrder.entities.WorkOrder;
+import com.ss.workOrder.exception.IdAlreadyExistsException;
+import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.util.CommonUtil;
 import com.ss.workOrder.util.Constants;
 
@@ -33,11 +40,11 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	public WorkOrder enqueueWorkOrder(long workOrderId, long timeStampMs) {
 		 WorkOrder workOrder = null;
 		if(workOrderId <= 0){
-			 throw new IllegalArgumentException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
+			 throw new BadRequestException("Work Order ID cannot have value less than or equal to 0. Please Enter valid ID. ");
 		}
 		
 		if ( workOrderMap.containsKey(workOrderId)) {
-			 throw new IllegalArgumentException("The work Order ID ("+workOrderId+") already Exists!");
+			 throw new IdAlreadyExistsException("The work Order ID ("+workOrderId+") already Exists!");
 		 }
 	     workOrder = new WorkOrder(workOrderId, timeStampMs);
 		 workOrderPriorityQueue.add(workOrder);
@@ -51,7 +58,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		WorkOrder workOrder = workOrderPriorityQueue.pollFirst();
 		if(null != workOrder){
 			workOrderMap.remove(workOrder.getWorkOrderID());
-		}		
+		}
 		return workOrder;
 	}
 	 
@@ -74,10 +81,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	@Override
 	public int getWorkOrderPosition(long workOrderId) {
 		WorkOrder workOrder = workOrderMap.get(workOrderId);
-		if (workOrder != null) {
-			return workOrderPriorityQueue.headSet(workOrder).size();
+		if (workOrder != null) {			
+			int position= 0;
+			Iterator<WorkOrder> itr = workOrderPriorityQueue.iterator();
+			while(itr.hasNext()) {
+				 workOrder = itr.next();
+				 if(workOrderId == workOrder.getWorkOrderID()){
+					 return position;
+				 }
+				 ++position;
+				 }	
 		}
-		 throw new NullPointerException("The work Order ID ("+workOrderId+") not Found!");
+		 throw new NotFoundException("The work Order ID ("+workOrderId+") not Found!");
 	}
 	
 	@Override

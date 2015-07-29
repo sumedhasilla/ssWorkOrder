@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ss.workOrder.entities.WorkOrder;
+import com.ss.workOrder.exception.NotFoundException;
 import com.ss.workOrder.service.WorkOrderService;
 
 
@@ -25,15 +26,14 @@ public class WorkOrderController {
 		return workOrder;
     }
 	
-
-	/*@ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
-	void handleBadRequests(HttpServletResponse response) throws IOException {
-	    response.sendError(HttpStatus.BAD_REQUEST.value());
-	}*/
-	
 	 @RequestMapping("/dequeue")
-	    public WorkOrder deQueuePQ() {
-	       	return this.workOrderService.dequeueWorkOrder();
+	    public WorkOrder deQueuePQ() {		 
+		 WorkOrder workOrder = this.workOrderService.dequeueWorkOrder();
+			 if(null != workOrder){
+				 return workOrder;
+			 }else{
+				 throw new NotFoundException("Work Order Queue is Empty!");
+			 }	       	
 	    }
 	
 	 @RequestMapping("/workOrderList")
@@ -50,5 +50,10 @@ public class WorkOrderController {
 	   public long getAverageWaitTme(@RequestParam(value="currentTime") long currentTime){
 		 return this.workOrderService.getAverageWaitTime(currentTime);
 	   }
-	
+	 
+	/*@ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT )
+    public String handleIdAlreadyExistsException(IdAlreadyExistsException e) {    
+		return e.getMessage();
+    }*/
 }
